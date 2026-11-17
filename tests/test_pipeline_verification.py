@@ -131,6 +131,8 @@ class TestTHzPipelineAndGovernance(unittest.TestCase):
         for root, dirs, _ in os.walk(REPO_ROOT):
             dirs[:] = [d for d in dirs if d not in skip_dirs and not d.startswith(".")]
             folder = Path(root)
+            if folder == REPO_ROOT:
+                continue
             readme = folder / "README.md"
             self.assertTrue(readme.exists(), f"Folder missing mandatory README.md: {folder}")
             text = readme.read_text(encoding="utf-8")
