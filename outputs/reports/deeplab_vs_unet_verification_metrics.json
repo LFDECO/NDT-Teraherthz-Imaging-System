@@ -1,0 +1,77 @@
+{
+  "rgb_demo": {
+    "rgb_demo_iou": 0.9272,
+    "rgb_demo_dice": 0.9622
+  },
+  "thz_loso_verification": {
+    "evaluation_protocol": "Leave-One-Scan-Out (LOSO) across 5 Cohort A PLA scans with physics-safe training-fold augmentations",
+    "caveat": "Reference masks in data/masks/ are physics-derived until CSIR-CSIO supplies physical CAD/caliper defect ground truth.",
+    "runtime_seconds": 1386.01,
+    "mean_deeplabv3plus_ap": 0.6535,
+    "mean_unet_ap": 0.5722,
+    "mean_deeplabv3plus_dice": 0.5135,
+    "mean_unet_dice": 0.5232,
+    "per_fold_metrics": [
+      {
+        "held_out_scan": "PLA_1C_450THz_100p",
+        "defect_code": "1C",
+        "frequency_ghz": 450.0,
+        "deeplabv3plus_ap": 0.4605,
+        "unet_ap": 0.9928,
+        "deeplabv3plus_dice": 0.1293,
+        "unet_dice": 0.5359,
+        "deeplabv3plus_false_alarm_px": null,
+        "unet_false_alarm_px": null,
+        "deeplab_defects_detected": 4
+      },
+      {
+        "held_out_scan": "PLA_1S_325THz_100p",
+        "defect_code": "1S",
+        "frequency_ghz": 325.0,
+        "deeplabv3plus_ap": 0.999,
+        "unet_ap": 0.406,
+        "deeplabv3plus_dice": 0.9841,
+        "unet_dice": 0.382,
+        "deeplabv3plus_false_alarm_px": null,
+        "unet_false_alarm_px": null,
+        "deeplab_defects_detected": 1
+      },
+      {
+        "held_out_scan": "PLA_3C_135THz_100p",
+        "defect_code": "3C",
+        "frequency_ghz": 135.0,
+        "deeplabv3plus_ap": 0.645,
+        "unet_ap": 0.3442,
+        "deeplabv3plus_dice": 0.2441,
+        "unet_dice": 0.2551,
+        "deeplabv3plus_false_alarm_px": null,
+        "unet_false_alarm_px": null,
+        "deeplab_defects_detected": 4
+      },
+      {
+        "held_out_scan": "PLA_3S_200THz_100p",
+        "defect_code": "3S",
+        "frequency_ghz": 200.0,
+        "deeplabv3plus_ap": 0.5096,
+        "unet_ap": 0.5457,
+        "deeplabv3plus_dice": 0.2098,
+        "unet_dice": 0.4431,
+        "deeplabv3plus_false_alarm_px": null,
+        "unet_false_alarm_px": null,
+        "deeplab_defects_detected": 2
+      },
+      {
+        "held_out_scan": "PLA_ND_300THz_100p",
+        "defect_code": "ND",
+        "frequency_ghz": 300.0,
+        "deeplabv3plus_ap": null,
+        "unet_ap": null,
+        "deeplabv3plus_dice": 1.0,
+        "unet_dice": 1.0,
+        "deeplabv3plus_false_alarm_px": 0,
+        "unet_false_alarm_px": 0,
+        "deeplab_defects_detected": 0
+      }
+    ]
+  }
+}

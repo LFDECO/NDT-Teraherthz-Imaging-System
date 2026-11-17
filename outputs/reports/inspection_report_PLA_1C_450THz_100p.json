@@ -1,0 +1,95 @@
+{
+  "inspection_metadata": {
+    "specimen_id": "PLA_1C_100P",
+    "timestamp_utc": "2026-11-17T00:20:19Z",
+    "frequency_ghz": 450.0,
+    "scan_pitch_mm_per_pixel": 1.0,
+    "native_dimensions_px": [
+      46,
+      46
+    ],
+    "segmentation_model": "THz-Adapted DeepLabV3+ (ResNet-18, OS=8, ASPP r=1,2,4)"
+  },
+  "global_structural_analysis": {
+    "material_type": "PLA",
+    "material_confidence": null,
+    "infill_pattern": "Default_Rectilinear",
+    "pattern_confidence": null,
+    "infill_density_pct": 100.0,
+    "note": "Model 1 multi-pattern/material training pending fixed-frequency CSIR multi-pattern scans."
+  },
+  "subsurface_defect_analysis": {
+    "status": "FAIL",
+    "defects_detected_count": 4,
+    "defects": [
+      {
+        "defect_id": 1,
+        "category": "Subsurface Blind/Buried Discontinuity",
+        "centroid_px": {
+          "x": 12.98,
+          "y": 13.07
+        },
+        "centroid_mm": {
+          "x": 12.98,
+          "y": 13.07
+        },
+        "pixel_area": 85,
+        "apparent_area_mm2": 85.0,
+        "apparent_diameter_mm": 10.4,
+        "beam_corrected_diameter_mm": 9.8,
+        "mean_mask_confidence": 0.922
+      },
+      {
+        "defect_id": 2,
+        "category": "Subsurface Blind/Buried Discontinuity",
+        "centroid_px": {
+          "x": 27.27,
+          "y": 25.34
+        },
+        "centroid_mm": {
+          "x": 27.27,
+          "y": 25.34
+        },
+        "pixel_area": 331,
+        "apparent_area_mm2": 331.0,
+        "apparent_diameter_mm": 20.53,
+        "beam_corrected_diameter_mm": 20.23,
+        "mean_mask_confidence": 0.931
+      },
+      {
+        "defect_id": 3,
+        "category": "Subsurface Blind/Buried Discontinuity",
+        "centroid_px": {
+          "x": 24.52,
+          "y": 21.91
+        },
+        "centroid_mm": {
+          "x": 24.52,
+          "y": 21.91
+        },
+        "pixel_area": 33,
+        "apparent_area_mm2": 33.0,
+        "apparent_diameter_mm": 6.48,
+        "beam_corrected_diameter_mm": 5.46,
+        "mean_mask_confidence": 0.959
+      },
+      {
+        "defect_id": 4,
+        "category": "Subsurface Blind/Buried Discontinuity",
+        "centroid_px": {
+          "x": 10.0,
+          "y": 22.0
+        },
+        "centroid_mm": {
+          "x": 10.0,
+          "y": 22.0
+        },
+        "pixel_area": 5,
+        "apparent_area_mm2": 5.0,
+        "apparent_diameter_mm": 2.52,
+        "beam_corrected_diameter_mm": 0.5,
+        "mean_mask_confidence": 0.788
+      }
+    ]
+  }
+}

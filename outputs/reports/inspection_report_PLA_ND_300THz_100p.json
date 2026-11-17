@@ -1,0 +1,26 @@
+{
+  "inspection_metadata": {
+    "specimen_id": "PLA_ND_100P",
+    "timestamp_utc": "2026-11-17T00:36:03Z",
+    "frequency_ghz": 300.0,
+    "scan_pitch_mm_per_pixel": 1.0,
+    "native_dimensions_px": [
+      46,
+      46
+    ],
+    "segmentation_model": "THz-Adapted DeepLabV3+ (ResNet-18, OS=8, ASPP r=1,2,4)"
+  },
+  "global_structural_analysis": {
+    "material_type": "PLA",
+    "material_confidence": null,
+    "infill_pattern": "Default_Rectilinear",
+    "pattern_confidence": null,
+    "infill_density_pct": 100.0,
+    "note": "Model 1 multi-pattern/material training pending fixed-frequency CSIR multi-pattern scans."
+  },
+  "subsurface_defect_analysis": {
+    "status": "PASS",
+    "defects_detected_count": 0,
+    "defects": []
+  }
+}

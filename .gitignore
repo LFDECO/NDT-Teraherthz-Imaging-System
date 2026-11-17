@@ -1,0 +1,62 @@
+# === Python & Environment Artifacts ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# === OS & IDE Files ===
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# === Secrets, Credentials & Local Config ===
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+*.p12
+*.pfx
+*credentials*.json
+*token*.json
+
+# === Documentation & Internal Governance Markdowns (Keep Only Root README.md Public) ===
+*.md
+!/README.md
+
+# === Sensitive Meeting Transcripts / Internal Notes ===
+*transcript*.pdf
+*Meeting*.pdf
+
+# === Model Checkpoints & Compiled Engines (Large / Proprietary) ===
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.onnx
+*.trt
+*.engine
+checkpoints/
+
+# === Derived Regenerable Data & Outputs (Optional: uncomment if keeping repo lightweight) ===
+# data/masks/*.npy
+# data/masks/*.png
+# outputs/figures/*.png
+# outputs/reports/*.json
+
+# === CSIR-CSIO Raw THz Scans (Tracked by default; uncomment below only if NDA-restricted) ===
+# Polymer sample data/*.csv
+# Polymer sample data/*.png

@@ -1,0 +1,64 @@
+# Default Configuration for THz-AI Polymer NDT Pipeline
+
+data:
+  raw_dir: "Polymer sample data"
+  manifest_path: "data/metadata_manifest.csv"
+  masks_dir: "data/masks"
+  cohort_a_field_of_view_mm: 40.0
+  cohort_a_pixel_pitch_mm: 1.0
+  cohort_b_assumed_pitch_mm: 1.0  # Unconfirmed with CSIR; flagged in docs/PRD.md
+
+preprocessing:
+  hot_strip_border_px: 4
+  wiener_kernel_size: 3
+  robust_low_pct: 5.0
+  robust_high_pct: 95.0
+  dog_sigma_small: 1.0
+  dog_sigma_large: 6.0
+  upsample_size: [128, 128]
+
+augmentation:
+  allow_90_rotations: true
+  allow_flips: true
+  subpixel_shift_px: 1
+  brightness_jitter_range: [0.90, 1.10]
+  gaussian_noise_std: 0.04
+  beam_blur_sigma_px: 1.8
+
+model1_characterizer:
+  backbone: "resnet34"
+  in_channels: 3
+  num_materials: 4       # PLA, PETG, ABS, TPU
+  num_patterns: 4        # Rectilinear, Grid, Gyroid, Concentric
+  loss_weights:
+    material: 1.0
+    pattern: 1.0
+    infill_pct: 2.0
+
+model2_deeplab_rgb_demo:
+  mode: "rgb_demo"
+  in_channels: 3
+  num_classes: 1
+  backbone: "resnet34"
+  output_stride: 16
+  aspp_rates: [6, 12, 18]
+  input_size: [256, 256]
+
+model2_deeplab_thz:
+  mode: "thz_ndt"
+  in_channels: 3
+  num_classes: 1
+  backbone: "resnet18"
+  output_stride: 8
+  aspp_rates: [1, 2, 4]
+  input_size: [128, 128]
+  focal_weight: 0.5
+  dice_weight: 0.5
+  learning_rate: 0.0015
+  epochs_demo: 35
+
+metrology:
+  prob_threshold: 0.50
+  morph_kernel_size: 3
+  min_area_mm2: 2.0
+  beam_width_mm: 3.5     # 3 mm theoretical, ~4 mm practical resolution

@@ -1,0 +1,203 @@
+{
+  "cohort_b_scan_count": 10,
+  "model1_smoke_loss": 3.0363,
+  "material_logits_shape": [
+    10,
+    4
+  ],
+  "pattern_logits_shape": [
+    10,
+    4
+  ],
+  "infill_pred_shape": [
+    10,
+    1
+  ],
+  "key_findings": [
+    "At 400 GHz and 100% infill, PLA (+0.0581), ABS (+0.0619), and TPU (+0.0600) show strongly overlapping interior medians.",
+    "PETG_0.45THz_100p (+0.0300) and PETG_0.425THz_15p (-0.0863) were captured at different frequencies than PLA/ABS/TPU (400/375 GHz), confounding material/infill comparison.",
+    "Infill Pattern head cannot yet be evaluated because all current scans share one default printing pattern (pending multi-pattern samples from partner AM lab)."
+  ],
+  "per_scan_physics_stats": [
+    {
+      "stem": "ABS_0.4THz_100p",
+      "material": "ABS",
+      "frequency_ghz": 400.0,
+      "infill_pct": 100.0,
+      "shape": [
+        61,
+        61
+      ],
+      "core_mean": 0.05867,
+      "core_std": 0.0447,
+      "core_median": 0.06,
+      "core_iqr": 0.0563,
+      "core_p10": 0.0019,
+      "core_p90": 0.1013,
+      "positive_fraction": 0.90004,
+      "directional_anisotropy": -0.03195
+    },
+    {
+      "stem": "PETG_0.375THz_45p",
+      "material": "PETG",
+      "frequency_ghz": 375.0,
+      "infill_pct": 45.0,
+      "shape": [
+        66,
+        59
+      ],
+      "core_mean": -0.02438,
+      "core_std": 0.01341,
+      "core_median": -0.0244,
+      "core_iqr": 0.0188,
+      "core_p10": -0.0413,
+      "core_p90": -0.0075,
+      "positive_fraction": 0.03113,
+      "directional_anisotropy": -0.10352
+    },
+    {
+      "stem": "PETG_0.375THz_75p",
+      "material": "PETG",
+      "frequency_ghz": 375.0,
+      "infill_pct": 75.0,
+      "shape": [
+        61,
+        59
+      ],
+      "core_mean": -0.02705,
+      "core_std": 0.01431,
+      "core_median": -0.0281,
+      "core_iqr": 0.0187,
+      "core_p10": -0.045,
+      "core_p90": -0.0094,
+      "positive_fraction": 0.03083,
+      "directional_anisotropy": -0.11142
+    },
+    {
+      "stem": "PETG_0.425THz_15p",
+      "material": "PETG",
+      "frequency_ghz": 425.0,
+      "infill_pct": 15.0,
+      "shape": [
+        61,
+        56
+      ],
+      "core_mean": -0.08318,
+      "core_std": 0.01551,
+      "core_median": -0.0863,
+      "core_iqr": 0.0188,
+      "core_p10": -0.0994,
+      "core_p90": -0.06,
+      "positive_fraction": 0.00046,
+      "directional_anisotropy": -0.24871
+    },
+    {
+      "stem": "PETG_0.45THz_100p",
+      "material": "PETG",
+      "frequency_ghz": 450.0,
+      "infill_pct": 100.0,
+      "shape": [
+        61,
+        61
+      ],
+      "core_mean": 0.03277,
+      "core_std": 0.04424,
+      "core_median": 0.03,
+      "core_iqr": 0.0713,
+      "core_p10": -0.0281,
+      "core_p90": 0.0919,
+      "positive_fraction": 0.73136,
+      "directional_anisotropy": -0.26032
+    },
+    {
+      "stem": "PLA_0.375THz_15p",
+      "material": "PLA",
+      "frequency_ghz": 375.0,
+      "infill_pct": 15.0,
+      "shape": [
+        61,
+        59
+      ],
+      "core_mean": -0.02809,
+      "core_std": 0.01384,
+      "core_median": -0.03,
+      "core_iqr": 0.0169,
+      "core_p10": -0.045,
+      "core_p90": -0.0113,
+      "positive_fraction": 0.02736,
+      "directional_anisotropy": -0.09694
+    },
+    {
+      "stem": "PLA_0.375THz_45p",
+      "material": "PLA",
+      "frequency_ghz": 375.0,
+      "infill_pct": 45.0,
+      "shape": [
+        61,
+        59
+      ],
+      "core_mean": -0.02858,
+      "core_std": 0.01229,
+      "core_median": -0.03,
+      "core_iqr": 0.015,
+      "core_p10": -0.0431,
+      "core_p90": -0.0131,
+      "positive_fraction": 0.01607,
+      "directional_anisotropy": -0.10903
+    },
+    {
+      "stem": "PLA_0.375THz_75p",
+      "material": "PLA",
+      "frequency_ghz": 375.0,
+      "infill_pct": 75.0,
+      "shape": [
+        61,
+        59
+      ],
+      "core_mean": -0.01141,
+      "core_std": 0.01472,
+      "core_median": -0.0131,
+      "core_iqr": 0.0206,
+      "core_p10": -0.0281,
+      "core_p90": 0.00712,
+      "positive_fraction": 0.17716,
+      "directional_anisotropy": -0.09908
+    },
+    {
+      "stem": "PLA_0.4THz_100p",
+      "material": "PLA",
+      "frequency_ghz": 400.0,
+      "infill_pct": 100.0,
+      "shape": [
+        61,
+        61
+      ],
+      "core_mean": 0.05669,
+      "core_std": 0.03878,
+      "core_median": 0.0581,
+      "core_iqr": 0.0525,
+      "core_p10": 0.0094,
+      "core_p90": 0.1013,
+      "positive_fraction": 0.93919,
+      "directional_anisotropy": -0.10554
+    },
+    {
+      "stem": "TPU_0.4THz_100p",
+      "material": "TPU",
+      "frequency_ghz": 400.0,
+      "infill_pct": 100.0,
+      "shape": [
+        61,
+        61
+      ],
+      "core_mean": 0.06784,
+      "core_std": 0.0444,
+      "core_median": 0.0619,
+      "core_iqr": 0.06,
+      "core_p10": 0.0169,
+      "core_p90": 0.1256,
+      "positive_fraction": 0.96626,
+      "directional_anisotropy": -0.07538
+    }
+  ]
+}
