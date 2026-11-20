@@ -1,0 +1,120 @@
+{
+  "dataset": "Curated Magnetic-Tile-Defect Industrial RGB Benchmark (24 samples: 16 train / 8 held-out test)",
+  "model": "DeepLabV3Plus (ResNet-18, Output Stride=8, ASPP r=[2,4,8], 3-Ch CLAHE+DoG+Sobel)",
+  "runtime_seconds": 659.91,
+  "summary": {
+    "total_test_samples": 8,
+    "correct_identifications": 7,
+    "identification_accuracy": 0.875,
+    "mean_defective_ap": 0.4429,
+    "mean_defective_dice": 0.3669,
+    "mean_defective_iou": 0.233,
+    "clean_false_alarm_pixels": 127
+  },
+  "per_sample_test_metrics": [
+    {
+      "sample_id": "MT_Blowhole__exp4_num_322656",
+      "category": "MT_Blowhole",
+      "ground_truth_status": "FAIL",
+      "predicted_status": "FAIL",
+      "identified_correctly": true,
+      "ap": 0.5397,
+      "dice": 0.48,
+      "iou": 0.3158,
+      "max_prob": 0.9935,
+      "predicted_components": 1,
+      "predicted_fg_pixels": 48
+    },
+    {
+      "sample_id": "MT_Blowhole__exp4_num_4995",
+      "category": "MT_Blowhole",
+      "ground_truth_status": "FAIL",
+      "predicted_status": "FAIL",
+      "identified_correctly": true,
+      "ap": 0.5049,
+      "dice": 0.3433,
+      "iou": 0.2073,
+      "max_prob": 0.9996,
+      "predicted_components": 4,
+      "predicted_fg_pixels": 181
+    },
+    {
+      "sample_id": "MT_Crack__exp1_num_342140",
+      "category": "MT_Crack",
+      "ground_truth_status": "FAIL",
+      "predicted_status": "FAIL",
+      "identified_correctly": true,
+      "ap": 0.4924,
+      "dice": 0.4553,
+      "iou": 0.2947,
+      "max_prob": 0.999,
+      "predicted_components": 1,
+      "predicted_fg_pixels": 66
+    },
+    {
+      "sample_id": "MT_Crack__exp2_num_342162",
+      "category": "MT_Crack",
+      "ground_truth_status": "FAIL",
+      "predicted_status": "FAIL",
+      "identified_correctly": true,
+      "ap": 0.4387,
+      "dice": 0.4545,
+      "iou": 0.2941,
+      "max_prob": 0.9934,
+      "predicted_components": 1,
+      "predicted_fg_pixels": 41
+    },
+    {
+      "sample_id": "MT_Break__exp2_num_304305",
+      "category": "MT_Break",
+      "ground_truth_status": "FAIL",
+      "predicted_status": "FAIL",
+      "identified_correctly": true,
+      "ap": 0.3327,
+      "dice": 0.065,
+      "iou": 0.0336,
+      "max_prob": 1.0,
+      "predicted_components": 1,
+      "predicted_fg_pixels": 140
+    },
+    {
+      "sample_id": "MT_Break__exp2_num_98102",
+      "category": "MT_Break",
+      "ground_truth_status": "FAIL",
+      "predicted_status": "FAIL",
+      "identified_correctly": true,
+      "ap": 0.3491,
+      "dice": 0.4035,
+      "iou": 0.2527,
+      "max_prob": 0.9973,
+      "predicted_components": 5,
+      "predicted_fg_pixels": 299
+    },
+    {
+      "sample_id": "MT_Free__exp1_num_351039",
+      "category": "MT_Free",
+      "ground_truth_status": "PASS",
+      "predicted_status": "FAIL",
+      "identified_correctly": false,
+      "ap": null,
+      "dice": 0.0,
+      "iou": 0.0,
+      "max_prob": 0.9994,
+      "predicted_components": 2,
+      "predicted_fg_pixels": 127
+    },
+    {
+      "sample_id": "MT_Free__exp1_num_855",
+      "category": "MT_Free",
+      "ground_truth_status": "PASS",
+      "predicted_status": "PASS",
+      "identified_correctly": true,
+      "ap": null,
+      "dice": 1.0,
+      "iou": 1.0,
+      "max_prob": 0.0523,
+      "predicted_components": 0,
+      "predicted_fg_pixels": 0
+    }
+  ]
+}

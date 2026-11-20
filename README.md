@@ -26,28 +26,29 @@ NDT Teraherthz Imaging System/
 ├── README.md                              # Master repository architecture & agent governance
 ├── requirements.txt                       # Reproducible Python dependencies
 ├── Polymer sample data/                   # 15 real THz CSV matrices + MATLAB PNG visualizations
-├── docs/                                  # (Local/Private via .gitignore) PRD & architecture specs
+├── docs/                                  # (Local/Private via .gitignore) PRD, architecture specs & speaker guide
 ├── configs/                               # Centralized YAML hyperparameters (RGB demo & THz NDT)
-├── data/                                  # Generated metadata manifest & ground-truth/reference masks
-│   └── masks/                             # Reference defect segmentation masks (.npy / .png)
+├── data/                                  # Generated manifests, reference masks & curated RGB benchmark
+│   ├── masks/                             # Reference defect segmentation masks (.npy / .png)
+│   └── rgb_defect_samples/                # 24 real industrial RGB defect samples + pixel masks
 ├── src/                                   # Modular Python package
 │   ├── preprocessing/                     # CSV loader, hot-strip masking, Wiener/DoG norm, augmentations
 │   ├── models/                            # Model 1 Characterizer, DeepLabV3+ (RGB & THz), U-Net baseline, losses
 │   ├── metrology/                         # OpenCV spatial moment metrology & JSON report formatter
-│   └── visualization/                     # CSIR presentation figure generators
-├── scripts/                               # End-to-end runnable verification & CSIR demo scripts
-├── outputs/                               # Generated figures and JSON diagnostic reports
-│   ├── figures/                           # CSIR meeting slides/figures (01 to 06)
-│   └── reports/                           # JSON inspection reports & benchmark metrics
+│   └── visualization/                     # CSIR mm-scale figures, PDF, editable PPTX & side-by-side speaker guides
+├── scripts/                               # End-to-end runnable verification, RGB/THz demo & presentation bundle scripts
+├── outputs/                               # Generated figures & JSON reports (PDF/PPTX/DOCX decks local via .gitignore)
+│   ├── figures/                           # Verification & presentation figures (01 to 08)
+│   └── reports/                           # JSON inspection reports & metrics (.npz plot caches local via .gitignore)
 ├── docker/                                # Containerization for SRM College GPU Lab training
-└── tests/                                 # Automated verification & governance compliance suite
+└── tests/                                 # Automated verification suite
 ```
 
 ---
 
-## 2. Step-by-Step Workflow & Verification Protocol (For Agents & Engineers)
+## 2. Step-by-Step Workflow & Verification Protocol
 
-Every engineer or AI agent onboarding to this repository must execute the verification pipeline sequentially:
+Execute the verification and demonstration pipelines sequentially:
 
 ```powershell
 # 1. Install dependencies (if not already present)
@@ -56,20 +57,25 @@ pip install -r requirements.txt
 # 2. Verify all 15 CSV scans, generate data/metadata_manifest.csv & masks, and plot preprocessing diagnostics
 python scripts/verify_dataset_and_preprocess.py
 
-# 3. Run the CSIR Meeting DeepLabV3+ Demo (RGB Architecture Explainer + THz Adaptation + Real THz Defect Localization)
+# 3. Run the THz DeepLabV3+ vs SmallUNet Leave-One-Scan-Out verification (use --replot-only after cache exists)
 python scripts/run_csir_deeplab_demo.py
 
 # 4. Run Model 1 Material & Infill Separability Audit across Cohort B scans
 python scripts/verify_model1_separability.py
 
-# 5. Execute the full automated test & governance verification suite
+# 5. Curate 24 real industrial RGB defect samples, train/evaluate DeepLabV3+, and build local PDF/PPTX/DOCX/MD bundle (--copy-to-downloads optional)
+python scripts/fetch_real_rgb_defect_samples.py
+python scripts/train_rgb_and_generate_pdf.py
+python scripts/build_csir_presentation_bundle.py
+
+# 6. Execute the full automated test suite
 python tests/test_pipeline_verification.py
 ```
 
 ### Verification Criteria
 - All 15 CSV scans in `Polymer sample data/` parse cleanly as 2D floating-point matrices without `NaN`/`Inf`.
 - `DeepLabV3Plus` runs cleanly in both **RGB Demo Mode** (`in_channels=3, aspp_rates=(6, 12, 18), output_stride=16`) and **THz NDT Mode** (`in_channels=3, upsample_size=(128, 128), output_stride=8, aspp_rates=(1, 2, 4)`).
-- Every folder in the repository contains a `README.md` with the mandatory 5-section governance template and an up-to-date Changelog.
+- Every local folder maintains a governance `README.md` (5-section template + Changelog), while subfolder `.md` files, `docs/`, presentation binaries (`outputs/*.pdf`, `*.pptx`, `*.docx`), and `.npz` plot caches remain excluded from public GitHub pushes via `.gitignore`.
 
 ---
 

@@ -88,14 +88,15 @@ def main() -> None:
                 "interior_median": round(stats["interior_median"], 5),
                 "interior_iqr": round(stats["interior_iqr"], 5),
                 "ref_mask_fg_pct": round(pos_pct, 2),
-                "raw_csv_path": str(Path(rec.csv_path).relative_to(REPO_ROOT)),
-                "mask_npy_path": str(mask_npy.relative_to(REPO_ROOT)),
+                "raw_csv_path": Path(rec.csv_path).relative_to(REPO_ROOT).as_posix(),
+                "mask_npy_path": mask_npy.relative_to(REPO_ROOT).as_posix(),
             }
         )
 
         if rec.stem in preview_targets:
             preview_items.append(
                 {
+                    "stem": rec.stem,
                     "label": f"{rec.stem}\n({rec.shape[0]}x{rec.shape[1]}, {rec.frequency_ghz:.0f}GHz)",
                     "raw": rec.array,
                     "tensor": tensor,

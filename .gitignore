@@ -20,6 +20,10 @@ Thumbs.db
 *.swp
 .vscode/
 .idea/
+~$*.docx
+~$*.pptx
+~$*.xlsx
+*.tmp
 
 # === Secrets, Credentials & Local Config ===
 .env
@@ -37,9 +41,13 @@ secrets/
 *.md
 !/README.md
 
-# === Sensitive Meeting Transcripts / Internal Notes ===
+# === Sensitive Meeting Transcripts, Presentations & Speaker Guides ===
 *transcript*.pdf
 *Meeting*.pdf
+outputs/*.pdf
+*.pptx
+*.docx
+outputs/*Speaker_Guide*
 
 # === Model Checkpoints & Compiled Engines (Large / Proprietary) ===
 *.pt
@@ -51,9 +59,15 @@ secrets/
 *.engine
 checkpoints/
 
+# === Regenerable Binary Plot Caches ===
+outputs/reports/*_plot_cache.npz
+*.npz
+
 # === Derived Regenerable Data & Outputs (Optional: uncomment if keeping repo lightweight) ===
 # data/masks/*.npy
 # data/masks/*.png
+# data/rgb_defect_samples/*.jpg
+# data/rgb_defect_samples/*.png
 # outputs/figures/*.png
 # outputs/reports/*.json
 

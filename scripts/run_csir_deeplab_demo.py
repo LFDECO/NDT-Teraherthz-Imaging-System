@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 import time
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import cv2
 import numpy as np
@@ -33,6 +34,14 @@ from src.visualization import (
     plot_thz_deeplabv3plus_activations,
     plot_thz_localization_gallery,
 )
+
+_DEFECT_LABEL_MAP = {
+    "1C": "1 Circular Void",
+    "1S": "1 Square Void",
+    "3C": "3x3 Circular Array",
+    "3S": "3x3 Square Array",
+    "ND": "No Defect Control",
+}
 
 
 def set_deterministic(seed: int = 42) -> None:
@@ -80,7 +89,7 @@ def make_rgb_demo_polymer_specimen(size: int = 256) -> Tuple[np.ndarray, np.ndar
     return rgb, mask
 
 
-def run_part_a_rgb_demo(cfg: dict, out_fig_path: Path, device: torch.device) -> dict:
+def run_part_a_rgb_demo(cfg: dict, out_fig_path: Path, device: torch.device) -> Tuple[dict, Dict[str, Any]]:
     """Train & run DeepLabV3+ in RGB Demo Mode and export architecture walkthrough figure."""
     rgb_cfg = cfg["model2_deeplab_rgb_demo"]
     size = int(rgb_cfg["input_size"][0])
@@ -135,7 +144,17 @@ def run_part_a_rgb_demo(cfg: dict, out_fig_path: Path, device: torch.device) -> 
 
     plot_deeplabv3plus_rgb_demo(rgb_img, gt_mask, intermediates, out_fig_path)
     print(f"[INFO] RGB DeepLabV3+ Demo -> IoU={iou:.3f}, Dice={dice:.3f} | Saved {out_fig_path}")
-    return {"rgb_demo_iou": round(iou, 4), "rgb_demo_dice": round(dice, 4)}
+    rgb_cache = {
+        "rgb_img": rgb_img,
+        "gt_mask": gt_mask,
+        "low_level_feat": intermediates["low_level_feat"].detach().cpu().numpy(),
+        "encoder_high_feat": intermediates["encoder_high_feat"].detach().cpu().numpy(),
+        "decoder_fused": intermediates["decoder_fused"].detach().cpu().numpy(),
+        "probs": intermediates["probs"].detach().cpu().numpy(),
+        "aspp_keys": list(intermediates["aspp_branches"].keys()),
+        "aspp_branches": {k: v.detach().cpu().numpy() for k, v in intermediates["aspp_branches"].items()},
+    }
+    return {"rgb_demo_iou": round(iou, 4), "rgb_demo_dice": round(dice, 4)}, rgb_cache
 
 
 def _upsample_pair(img_chw: np.ndarray, mask_hw: np.ndarray, size: int = 128) -> Tuple[np.ndarray, np.ndarray]:
@@ -233,7 +252,128 @@ def _train_seg_model(
             opt.step()
 
 
-def run_part_b_thz_verification(cfg: dict, device: torch.device) -> None:
+def _save_thz_plot_cache(
+    cache_path: Path,
+    rgb_cache: Dict[str, Any],
+    activation_items: List[Dict[str, Any]],
+    gallery_items: List[Dict[str, Any]],
+) -> None:
+    """Save computed arrays for rapid --replot-only regeneration without retraining."""
+    payload: Dict[str, Any] = {
+        "rgb_img": rgb_cache["rgb_img"],
+        "rgb_gt_mask": rgb_cache["gt_mask"],
+        "rgb_low_level_feat": rgb_cache["low_level_feat"],
+        "rgb_encoder_high_feat": rgb_cache["encoder_high_feat"],
+        "rgb_decoder_fused": rgb_cache["decoder_fused"],
+        "rgb_probs": rgb_cache["probs"],
+        "rgb_aspp_keys": np.array([json.dumps(rgb_cache["aspp_keys"])]),
+    }
+    for k, arr in rgb_cache["aspp_branches"].items():
+        payload[f"rgb_aspp_{k}"] = arr
+
+    act_meta = []
+    for idx, item in enumerate(activation_items):
+        inter = item["intermediates"]
+        br = inter["aspp_branches"]
+        act_meta.append(
+            {
+                "stem": item["stem"],
+                "label": item["label"],
+                "native_shape": list(item["native_shape"]),
+            }
+        )
+        payload[f"act_{idx}_input_ch0"] = item["input_ch0"]
+        payload[f"act_{idx}_probs"] = inter["probs"].detach().cpu().numpy()
+        payload[f"act_{idx}_low"] = inter["low_level_feat"].detach().cpu().numpy()
+        payload[f"act_{idx}_r1"] = br["rate_1"].detach().cpu().numpy()
+        payload[f"act_{idx}_r2"] = br["rate_2"].detach().cpu().numpy()
+        payload[f"act_{idx}_r4"] = br["rate_4"].detach().cpu().numpy()
+
+    gal_meta = []
+    for idx, item in enumerate(gallery_items):
+        gal_meta.append(
+            {
+                "stem": item["stem"],
+                "label": item["label"],
+                "defects": item["defects"],
+            }
+        )
+        payload[f"gal_{idx}_raw"] = item["raw"]
+        payload[f"gal_{idx}_norm_ch0"] = item["norm_ch0"]
+        payload[f"gal_{idx}_dog_ch1"] = item["dog_ch1"]
+        payload[f"gal_{idx}_prob_native"] = item["prob_native"]
+        payload[f"gal_{idx}_binary_native"] = item["binary_native"]
+
+    payload["act_meta_json"] = np.array([json.dumps(act_meta)])
+    payload["gal_meta_json"] = np.array([json.dumps(gal_meta)])
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(cache_path, **payload)
+    print(f"[INFO] Saved THz demo plot cache -> {cache_path}")
+
+
+def _replot_from_cache(cache_path: Path, figures_dir: Path) -> None:
+    """Regenerate Figures 03, 04, and 05 in seconds using cached inference arrays."""
+    if not cache_path.exists():
+        raise FileNotFoundError(f"Plot cache not found: {cache_path}. Run without --replot-only first.")
+
+    data = np.load(cache_path, allow_pickle=False)
+    aspp_keys = json.loads(str(data["rgb_aspp_keys"][0]))
+    rgb_inter = {
+        "low_level_feat": torch.from_numpy(data["rgb_low_level_feat"]),
+        "encoder_high_feat": torch.from_numpy(data["rgb_encoder_high_feat"]),
+        "decoder_fused": torch.from_numpy(data["rgb_decoder_fused"]),
+        "probs": torch.from_numpy(data["rgb_probs"]),
+        "aspp_branches": {k: torch.from_numpy(data[f"rgb_aspp_{k}"]) for k in aspp_keys},
+    }
+    fig3_path = figures_dir / "03_deeplabv3plus_rgb_architecture_demo.png"
+    plot_deeplabv3plus_rgb_demo(data["rgb_img"], data["rgb_gt_mask"], rgb_inter, fig3_path)
+    print(f"[INFO] Replotted Figure 03 -> {fig3_path}")
+
+    act_meta = json.loads(str(data["act_meta_json"][0]))
+    activation_items = []
+    for idx, meta in enumerate(act_meta):
+        activation_items.append(
+            {
+                "stem": meta["stem"],
+                "native_shape": tuple(meta["native_shape"]),
+                "label": meta["label"],
+                "input_ch0": data[f"act_{idx}_input_ch0"],
+                "intermediates": {
+                    "probs": torch.from_numpy(data[f"act_{idx}_probs"]),
+                    "low_level_feat": torch.from_numpy(data[f"act_{idx}_low"]),
+                    "aspp_branches": {
+                        "rate_1": torch.from_numpy(data[f"act_{idx}_r1"]),
+                        "rate_2": torch.from_numpy(data[f"act_{idx}_r2"]),
+                        "rate_4": torch.from_numpy(data[f"act_{idx}_r4"]),
+                    },
+                },
+            }
+        )
+    fig4_path = figures_dir / "04_thz_deeplabv3plus_internal_activations.png"
+    plot_thz_deeplabv3plus_activations(activation_items, fig4_path)
+    print(f"[INFO] Replotted Figure 04 -> {fig4_path}")
+
+    gal_meta = json.loads(str(data["gal_meta_json"][0]))
+    gallery_items = []
+    for idx, meta in enumerate(gal_meta):
+        gallery_items.append(
+            {
+                "stem": meta["stem"],
+                "label": meta["label"],
+                "defects": meta["defects"],
+                "raw": data[f"gal_{idx}_raw"],
+                "norm_ch0": data[f"gal_{idx}_norm_ch0"],
+                "dog_ch1": data[f"gal_{idx}_dog_ch1"],
+                "prob_native": data[f"gal_{idx}_prob_native"],
+                "binary_native": data[f"gal_{idx}_binary_native"],
+            }
+        )
+    fig5_path = figures_dir / "05_thz_defect_localization_all_samples.png"
+    plot_thz_localization_gallery(gallery_items, fig5_path)
+    print(f"[INFO] Replotted Figure 05 -> {fig5_path}")
+
+
+def run_part_b_thz_verification(cfg: dict, device: torch.device) -> Tuple[dict, List[Dict[str, Any]], List[Dict[str, Any]]]:
     """Run Leave-One-Scan-Out comparison (THz-DeepLabV3+ vs SmallUNet) + activations + JSONs."""
     raw_dir = REPO_ROOT / cfg["data"]["raw_dir"]
     figures_dir = REPO_ROOT / "outputs" / "figures"
@@ -355,8 +495,10 @@ def run_part_b_thz_verification(cfg: dict, device: torch.device) -> None:
         )
         save_inspection_report(report, reports_dir / f"inspection_report_{held_out.stem}.json")
 
+        defect_desc = _DEFECT_LABEL_MAP.get(held_out.defect_code.upper(), held_out.defect_code)
         deeplab_predictions[held_out.stem] = {
-            "label": f"{held_out.stem}\n({held_out.defect_code}, {held_out.frequency_ghz:.0f}GHz)",
+            "stem": held_out.stem,
+            "label": f"{held_out.stem}\n({defect_desc}, {held_out.frequency_ghz:.0f}GHz)",
             "raw": held_out.array,
             "norm_ch0": test_tensor[0],
             "dog_ch1": test_tensor[1],
@@ -368,7 +510,9 @@ def run_part_b_thz_verification(cfg: dict, device: torch.device) -> None:
         if held_out.stem in {"PLA_1C_450THz_100p", "PLA_3S_200THz_100p"}:
             activation_items.append(
                 {
-                    "label": f"{held_out.stem}\n(Held-Out, {held_out.frequency_ghz:.0f}GHz)",
+                    "stem": held_out.stem,
+                    "native_shape": held_out.shape,
+                    "label": f"{held_out.stem}\n({defect_desc}, {held_out.frequency_ghz:.0f}GHz)",
                     "input_ch0": up_test[0],
                     "intermediates": dl_inter,
                 }
@@ -404,7 +548,8 @@ def run_part_b_thz_verification(cfg: dict, device: torch.device) -> None:
         )
         gallery_items.append(
             {
-                "label": f"{plate.stem}\n(Cross-Cohort {plate.shape[0]}x{plate.shape[1]})",
+                "stem": plate.stem,
+                "label": f"{plate.stem}\n(Multi-Defect Plate: {plate.material} {int(plate.infill_pct)}%)",
                 "raw": plate.array,
                 "norm_ch0": p_tensor[0],
                 "dog_ch1": p_tensor[1],
@@ -434,23 +579,40 @@ def run_part_b_thz_verification(cfg: dict, device: torch.device) -> None:
         "mean_unet_dice": round(float(np.mean([m["unet_dice"] for m in fold_metrics])), 4),
         "per_fold_metrics": fold_metrics,
     }
-    return summary
+    return summary, activation_items, gallery_items
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Run CSIR DeepLabV3+ RGB & THz verification.")
+    parser.add_argument(
+        "--replot-only",
+        action="store_true",
+        help="Regenerate Figures 03, 04, and 05 from cached inference arrays without retraining.",
+    )
+    args = parser.parse_args()
+
+    figures_dir = REPO_ROOT / "outputs" / "figures"
+    reports_dir = REPO_ROOT / "outputs" / "reports"
+    cache_path = reports_dir / "thz_demo_plot_cache.npz"
+
+    if args.replot_only:
+        _replot_from_cache(cache_path, figures_dir)
+        return
+
     set_deterministic(42)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"[INFO] Running DeepLabV3+ CSIR demo on device: {device}")
     with open(REPO_ROOT / "configs" / "default_config.yaml", "r", encoding="utf-8") as fp:
         cfg = yaml.safe_load(fp)
 
-    fig3_path = REPO_ROOT / "outputs" / "figures" / "03_deeplabv3plus_rgb_architecture_demo.png"
-    rgb_summary = run_part_a_rgb_demo(cfg, fig3_path, device=device)
+    fig3_path = figures_dir / "03_deeplabv3plus_rgb_architecture_demo.png"
+    rgb_summary, rgb_cache = run_part_a_rgb_demo(cfg, fig3_path, device=device)
 
-    thz_summary = run_part_b_thz_verification(cfg, device=device)
+    thz_summary, activation_items, gallery_items = run_part_b_thz_verification(cfg, device=device)
+    _save_thz_plot_cache(cache_path, rgb_cache, activation_items, gallery_items)
+
     combined = {"rgb_demo": rgb_summary, "thz_loso_verification": thz_summary}
-
-    metrics_path = REPO_ROOT / "outputs" / "reports" / "deeplab_vs_unet_verification_metrics.json"
+    metrics_path = reports_dir / "deeplab_vs_unet_verification_metrics.json"
     with open(metrics_path, "w", encoding="utf-8") as fp:
         json.dump(combined, fp, indent=2)
     print(f"[INFO] Saved benchmark JSON -> {metrics_path}")

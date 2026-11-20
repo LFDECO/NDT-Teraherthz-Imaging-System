@@ -99,7 +99,7 @@ def main() -> None:
         "pattern_logits_shape": list(out["pattern_logits"].shape),
         "infill_pred_shape": list(out["infill_pred"].shape),
         "key_findings": [
-            "At 400 GHz and 100% infill, PLA (+0.0581), ABS (+0.0619), and TPU (+0.0600) show strongly overlapping interior medians.",
+            "At 400 GHz and 100% infill, PLA (+0.0581), ABS (+0.0600), and TPU (+0.0619) show strongly overlapping interior medians.",
             "PETG_0.45THz_100p (+0.0300) and PETG_0.425THz_15p (-0.0863) were captured at different frequencies than PLA/ABS/TPU (400/375 GHz), confounding material/infill comparison.",
             "Infill Pattern head cannot yet be evaluated because all current scans share one default printing pattern (pending multi-pattern samples from partner AM lab).",
         ],

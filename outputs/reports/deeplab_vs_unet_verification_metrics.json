@@ -6,7 +6,7 @@
   "thz_loso_verification": {
     "evaluation_protocol": "Leave-One-Scan-Out (LOSO) across 5 Cohort A PLA scans with physics-safe training-fold augmentations",
     "caveat": "Reference masks in data/masks/ are physics-derived until CSIR-CSIO supplies physical CAD/caliper defect ground truth.",
-    "runtime_seconds": 1386.01,
+    "runtime_seconds": 1707.68,
     "mean_deeplabv3plus_ap": 0.6535,
     "mean_unet_ap": 0.5722,
     "mean_deeplabv3plus_dice": 0.5135,
